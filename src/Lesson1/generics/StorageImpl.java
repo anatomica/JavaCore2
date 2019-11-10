@@ -1,5 +1,4 @@
 package Lesson1.generics;
-
 import java.io.Serializable;
 import java.lang.reflect.Array;
 
