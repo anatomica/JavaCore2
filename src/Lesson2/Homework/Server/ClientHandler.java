@@ -1,7 +1,5 @@
 package Lesson2.Homework.Server;
-
-import Messenger.Server.gson.*;
-
+import Lesson2.Homework.Server.gson.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

@@ -1,5 +1,5 @@
 package Lesson2.Homework.Client;
-import Messenger.Client.Controller.Controller;
+import Lesson2.Homework.Client.Controller.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,7 +17,7 @@ public class Messenger extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Сетевой чат");
-        stage.getIcons().add(new Image("Messenger/Client/stage_icon.png"));
+        stage.getIcons().add(new Image("Lesson2/Homework/Client/stage_icon.png"));
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("scene.fxml"));
         Parent root = loader.load();

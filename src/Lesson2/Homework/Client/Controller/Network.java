@@ -1,7 +1,5 @@
 package Lesson2.Homework.Client.Controller;
-
 import javafx.application.Platform;
-
 import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

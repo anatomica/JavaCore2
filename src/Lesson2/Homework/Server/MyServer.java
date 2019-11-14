@@ -1,9 +1,7 @@
 package Lesson2.Homework.Server;
-
-import Messenger.Server.auth.AuthService;
-import Messenger.Server.auth.BaseAuthService;
-import Messenger.Server.gson.Message;
-
+import Lesson2.Homework.Server.auth.AuthService;
+import Lesson2.Homework.Server.auth.BaseAuthService;
+import Lesson2.Homework.Server.gson.Message;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

@@ -1,6 +1,5 @@
 package Lesson2.Homework.Client.Controller;
-
-import Messenger.Client.gson.*;
+import Lesson2.Homework.Client.gson.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

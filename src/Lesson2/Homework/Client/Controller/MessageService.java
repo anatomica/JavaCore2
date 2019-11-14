@@ -1,7 +1,5 @@
 package Lesson2.Homework.Client.Controller;
-
-import Messenger.Client.gson.ClientListMessage;
-import Messenger.Client.gson.Message;
+import Lesson2.Homework.Client.gson.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Alert;
