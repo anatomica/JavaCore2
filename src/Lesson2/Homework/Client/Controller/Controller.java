@@ -7,7 +7,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang.exception.ExceptionUtils;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -19,6 +18,7 @@ public class Controller implements Initializable {
     @FXML public TextArea textArea;
     @FXML public MenuItem closeButton;
     @FXML public MenuItem clearChat;
+    @FXML public MenuItem changeNick;
     @FXML public TextField loginField;
     @FXML public PasswordField passField;
     @FXML public HBox authPanel;
@@ -133,5 +133,14 @@ public class Controller implements Initializable {
 
     public void clearChatAction(ActionEvent actionEvent) {
         textArea.clear();
+    }
+
+    public void changeNickAction(ActionEvent actionEvent) throws IOException {
+        String nick = textMessage.getText();
+        ChangeNick msg = new ChangeNick();
+        msg.nick = nick;
+        Message newNick = Message.createNick(msg);
+        messageService.sendMessage(newNick.toJson());
+        textMessage.clear();
     }
 }

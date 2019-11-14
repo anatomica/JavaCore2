@@ -28,13 +28,13 @@ public class BaseAuthService implements AuthService {
         return null;
     }
 
-    private static void connection() throws ClassNotFoundException, SQLException {
+    public static void connection() throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");
         conn = DriverManager.getConnection("jdbc:sqlite:LoginData.db");
         stmt = conn.createStatement();
     }
 
-    private static void disconect() throws SQLException {
+    public static void disconect() throws SQLException {
         conn.close();
     }
 

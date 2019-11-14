@@ -1,9 +1,12 @@
 package Lesson2.Homework.Server;
+import Lesson2.Homework.Server.auth.BaseAuthService;
 import Lesson2.Homework.Server.gson.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public class ClientHandler {
@@ -40,12 +43,24 @@ public class ClientHandler {
         }
     }
 
-    private void readMessages() throws IOException {
+    private void readMessages() throws IOException, SQLException {
         while (true) {
             String clientMessage = in.readUTF();
             System.out.printf("Сообщение: '%s' от клиента: %s%n", clientMessage, clientName);
             Message m = Message.fromJson(clientMessage);
             switch (m.command) {
+                case CHANGE_NICK:
+                    ChangeNick changeNick = m.changeNick;
+                    myServer.broadcastMessage(changeNick.from + changeNick.nick, this);
+
+                    try {
+                        BaseAuthService.connection();
+                    } catch (SQLException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    BaseAuthService.disconect();
+                    break;
                 case PUBLIC_MESSAGE:
                     PublicMessage publicMessage = m.publicMessage;
                     myServer.broadcastMessage(publicMessage.from + ": " + publicMessage.message, this);
