@@ -24,7 +24,6 @@ public class BaseAuthService implements AuthService {
                 }
             }
         }
-        disconect();
         return null;
     }
 
@@ -35,6 +34,7 @@ public class BaseAuthService implements AuthService {
     }
 
     public static void disconect() throws SQLException {
+        stmt.close();
         conn.close();
     }
 

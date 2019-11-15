@@ -1,13 +1,13 @@
 package Lesson2.Homework.Server;
 import Lesson2.Homework.Server.auth.BaseAuthService;
 import Lesson2.Homework.Server.gson.*;
+import com.sun.javafx.binding.StringFormatter;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class ClientHandler {
 
@@ -16,6 +16,8 @@ public class ClientHandler {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
+    private static Connection conn;
+    private static Statement stmt;
 
     ClientHandler(Socket socket, MyServer myServer) {
         try {
@@ -28,6 +30,7 @@ public class ClientHandler {
                 try {
                     while (true) {
                         if (authentication()) {
+                            BaseAuthService.disconect();
                             break;
                         }
                     }
@@ -52,14 +55,14 @@ public class ClientHandler {
                 case CHANGE_NICK:
                     ChangeNick changeNick = m.changeNick;
                     myServer.broadcastMessage(changeNick.from + changeNick.nick, this);
-
                     try {
-                        BaseAuthService.connection();
-                    } catch (SQLException | ClassNotFoundException e) {
+                        connection();
+                        stmt.executeUpdate(String.format("UPDATE LoginData SET Nick = '%s' WHERE Nick = '%s'",
+                                changeNick.nick, clientName));
+                    }  catch (SQLException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
-
-                    BaseAuthService.disconect();
+                    disconect();
                     break;
                 case PUBLIC_MESSAGE:
                     PublicMessage publicMessage = m.publicMessage;
@@ -122,5 +125,16 @@ public class ClientHandler {
 
     String getClientName() {
         return clientName;
+    }
+
+    public static void connection() throws ClassNotFoundException, SQLException {
+        Class.forName("org.sqlite.JDBC");
+        conn = DriverManager.getConnection("jdbc:sqlite:LoginData.db");
+        stmt = conn.createStatement();
+    }
+
+    public static void disconect() throws SQLException {
+        stmt.close();
+        conn.close();
     }
 }
