@@ -52,6 +52,7 @@
                 <Menu mnemonicParsing="false" text="Помощь">
                   <items>
                     <MenuItem mnemonicParsing="false" text="О приложении ..." />
+                    <MenuItem fx:id="howChangeNick" mnemonicParsing="false" onAction="#howChangeNickAction" text="Как сменить ник?" />
                   </items>
                 </Menu>
               </menus>

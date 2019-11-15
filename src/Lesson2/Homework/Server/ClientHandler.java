@@ -1,21 +1,20 @@
 package Lesson2.Homework.Server;
 import Lesson2.Homework.Server.auth.BaseAuthService;
 import Lesson2.Homework.Server.gson.*;
-import com.sun.javafx.binding.StringFormatter;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.*;
 
-public class ClientHandler {
+class ClientHandler {
 
     private MyServer myServer;
     private String clientName;
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
+    private ChangeNick changeNick;
     private static Connection conn;
     private static Statement stmt;
 
@@ -30,7 +29,6 @@ public class ClientHandler {
                 try {
                     while (true) {
                         if (authentication()) {
-                            BaseAuthService.disconect();
                             break;
                         }
                     }
@@ -53,14 +51,23 @@ public class ClientHandler {
             Message m = Message.fromJson(clientMessage);
             switch (m.command) {
                 case CHANGE_NICK:
-                    ChangeNick changeNick = m.changeNick;
-                    myServer.broadcastMessage(changeNick.from + changeNick.nick, this);
+                    changeNick = m.changeNick;
+
                     try {
                         connection();
-                        stmt.executeUpdate(String.format("UPDATE LoginData SET Nick = '%s' WHERE Nick = '%s'",
-                                changeNick.nick, clientName));
                     }  catch (SQLException | ClassNotFoundException e) {
                         e.printStackTrace();
+                    }
+
+                    if (verifyNick()) {
+                        stmt.executeUpdate(String.format("UPDATE LoginData SET Nick = '%s' WHERE Nick = '%s'",
+                                changeNick.nick, clientName));
+                        myServer.broadcastMessage(clientName + " сменил(а) ник, теперь он(а): " + changeNick.nick);
+                        myServer.unsubscribe(this);
+                        clientName = changeNick.nick;
+                        myServer.subscribe(this);
+                    } else {
+                        sendMessage("Данный Ник занят! \nПожалуйста, выберите другой Ник!");
                     }
                     disconect();
                     break;
@@ -78,18 +85,6 @@ public class ClientHandler {
         }
     }
 
-    private void closeConnection() {
-        myServer.unsubscribe(this);
-        myServer.broadcastMessage(clientName + " is offline");
-        try {
-            socket.close();
-        } catch (IOException e) {
-            System.err.println("Failed to close socket!");
-            e.printStackTrace();
-        }
-    }
-
-    // "/auth login password"
     private boolean authentication() throws IOException, SQLException {
         String clientMessage = in.readUTF();
         Message message = Message.fromJson(clientMessage);
@@ -98,6 +93,7 @@ public class ClientHandler {
             String login = authMessage.login;
             String password = authMessage.password;
             String nick = myServer.getAuthService().getNickByLoginPass(login, password);
+            BaseAuthService.disconect();
             if (nick == null) {
                 sendMessage("Неверные логин/пароль!");
                 return false;
@@ -108,13 +104,26 @@ public class ClientHandler {
             }
             sendMessage("/authok " + nick);
             clientName = nick;
-            myServer.broadcastMessage(clientName + " is online");
+            myServer.broadcastMessage(clientName + " онлайн!");
             myServer.subscribe(this);
         }
         return true;
     }
 
-    public void sendMessage(String message)  {
+    private boolean verifyNick() throws SQLException {
+        ResultSet rs = stmt.executeQuery("select * from LoginData");
+        while (rs.next()) {
+            ResultSetMetaData dataInBase = rs.getMetaData();
+            for (int i = 1; i <= dataInBase.getColumnCount(); i++) {
+                if (rs.getString("Nick").equals(changeNick.nick)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    void sendMessage(String message)  {
         try {
             out.writeUTF(message);
         } catch (IOException e) {
@@ -127,14 +136,26 @@ public class ClientHandler {
         return clientName;
     }
 
-    public static void connection() throws ClassNotFoundException, SQLException {
+    private static void connection() throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");
         conn = DriverManager.getConnection("jdbc:sqlite:LoginData.db");
         stmt = conn.createStatement();
     }
 
-    public static void disconect() throws SQLException {
+    private static void disconect() throws SQLException {
         stmt.close();
         conn.close();
+    }
+
+    private void closeConnection() {
+        myServer.unsubscribe(this);
+        if (clientName != null)
+            myServer.broadcastMessage(clientName + " офлайн!");
+        try {
+            socket.close();
+        } catch (IOException e) {
+            System.err.println("Failed to close socket!");
+            e.printStackTrace();
+        }
     }
 }

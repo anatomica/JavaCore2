@@ -19,12 +19,14 @@ public class Controller implements Initializable {
     @FXML public MenuItem closeButton;
     @FXML public MenuItem clearChat;
     @FXML public MenuItem changeNick;
+    @FXML public MenuItem howChangeNick;
     @FXML public TextField loginField;
     @FXML public PasswordField passField;
     @FXML public HBox authPanel;
     @FXML public VBox chatPanel;
     @FXML public ListView<String> clientList;
     public String nickName;
+
     private MessageService messageService;
     private String selectedNickname;
 
@@ -47,7 +49,6 @@ public class Controller implements Initializable {
         TextArea textArea = new TextArea();
         textArea.setText(stackTrace);
         dialogPaneContent.getChildren().addAll(label, textArea);
-        // Set content for Dialog Pane
         alert.getDialogPane().setContent(dialogPaneContent);
         alert.setResizable(true);
         alert.showAndWait();
@@ -141,6 +142,12 @@ public class Controller implements Initializable {
         msg.nick = nick;
         Message newNick = Message.createNick(msg);
         messageService.sendMessage(newNick.toJson());
+        nickName = nick;
         textMessage.clear();
+    }
+
+    public void howChangeNickAction(ActionEvent actionEvent) {
+        textArea.appendText("Для того, чтобы сменить Ник, \nвведите его в нижней панели для отправки сообщений " +
+                "\nи, не нажимая отправить, \nперейдите в меню 'Правка' и нажмите 'Сменить Ник'" + System.lineSeparator());
     }
 }

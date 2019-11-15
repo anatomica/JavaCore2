@@ -27,7 +27,7 @@ public class BaseAuthService implements AuthService {
         return null;
     }
 
-    public static void connection() throws ClassNotFoundException, SQLException {
+    private static void connection() throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");
         conn = DriverManager.getConnection("jdbc:sqlite:LoginData.db");
         stmt = conn.createStatement();
