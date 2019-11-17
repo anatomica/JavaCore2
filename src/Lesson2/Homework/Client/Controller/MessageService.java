@@ -4,6 +4,9 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+
+import java.io.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -19,6 +22,7 @@ class MessageService {
     private int hostPort;
 
     private TextArea textArea;
+    private TextField textMessage;
     private Controller controller;
     private boolean needStopServerOnClosed;
     private Network network;
@@ -27,6 +31,7 @@ class MessageService {
     private int waitTime = 120;  // ожидание в секундах
 
     MessageService (Controller controller, boolean needStopServerOnClosed) {
+        this.textMessage = controller.textMessage;
         this.textArea = controller.textArea;
         this.controller = controller;
         this.needStopServerOnClosed = needStopServerOnClosed;
@@ -89,6 +94,8 @@ class MessageService {
 
     public void sendMessage(String message) {
         network.send(message);
+        if (!textMessage.getText().equals(""))
+        ChatHistory("Я: " + textMessage.getText());
     }
 
     void processRetrievedMessage(String message) {
@@ -111,16 +118,28 @@ class MessageService {
             }
             else {
                 textArea.appendText(message + System.lineSeparator());
+                ChatHistory(message);
             }
         }
     }
 
-    public void close() throws IOException {
+    void close() throws IOException {
         if (needStopServerOnClosed) {
             sendMessage(STOP_SERVER_COMMAND);
         }
         network.close();
         System.exit(0);
+    }
+
+    private void ChatHistory(String messageText) {
+        File file = new File("ChatHistory.txt");
+        System.out.println(file.exists());
+        System.out.println(file.canWrite());
+        try(FileWriter writer = new FileWriter(file, true);) {
+            writer.write(messageText + "\n");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 }
