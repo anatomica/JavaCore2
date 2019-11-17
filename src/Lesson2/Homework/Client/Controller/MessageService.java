@@ -5,11 +5,15 @@ import javafx.collections.FXCollections;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import org.apache.commons.io.input.ReversedLinesFileReader;
 
 import java.io.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 class MessageService {
@@ -29,8 +33,9 @@ class MessageService {
     private String nickname;
     private Thread timeWait;
     private int waitTime = 120;  // ожидание в секундах
+    private int howManyMsgLoad = 5; // кол-во загрузки сообщений из истории
 
-    MessageService (Controller controller, boolean needStopServerOnClosed) {
+    MessageService(Controller controller, boolean needStopServerOnClosed) {
         this.textMessage = controller.textMessage;
         this.textArea = controller.textArea;
         this.controller = controller;
@@ -38,7 +43,7 @@ class MessageService {
         initialize();
     }
 
-    private void initialize () {
+    private void initialize() {
         readProperties();
         startConnectionToServer();
         timeWait();
@@ -68,7 +73,7 @@ class MessageService {
     private void timeWait() {
         timeWait = new Thread(() -> {
             try {
-                for(int i = 1; i < waitTime; i++) {
+                for (int i = 1; i < waitTime; i++) {
                     System.out.println(i);
                     TimeUnit.SECONDS.sleep(1);
                 }
@@ -92,19 +97,20 @@ class MessageService {
         });
     }
 
-    public void sendMessage(String message) {
+    void sendMessage(String message) {
         network.send(message);
         if (!textMessage.getText().equals(""))
-        ChatHistory("Я: " + textMessage.getText());
+            ChatHistory("Я: " + textMessage.getText());
     }
 
-    void processRetrievedMessage(String message) {
+    void processRetrievedMessage(String message) throws IOException {
         if (message.startsWith("/authok")) {
             timeWait.interrupt();
             nickname = message.split("\\s+")[1];
             controller.nickName = nickname;
             controller.authPanel.setVisible(false);
             controller.chatPanel.setVisible(true);
+            loadChatHistory();
         } else if (controller.authPanel.isVisible()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Ошибка аутентификации!");
@@ -115,10 +121,12 @@ class MessageService {
                 Message msg = Message.fromJson(message);
                 ClientListMessage clientListMessage = msg.clientListMessage;
                 controller.clientList.setItems(FXCollections.observableArrayList(clientListMessage.online));
-            }
-            else {
+            } else {
                 textArea.appendText(message + System.lineSeparator());
-                ChatHistory(message);
+                if (!message.equals("")) {
+                    if (!message.endsWith("лайн!"))
+                        ChatHistory(message);
+                }
             }
         }
     }
@@ -133,13 +141,40 @@ class MessageService {
 
     private void ChatHistory(String messageText) {
         File file = new File("ChatHistory.txt");
-        System.out.println(file.exists());
         System.out.println(file.canWrite());
-        try(FileWriter writer = new FileWriter(file, true);) {
+        try (FileWriter writer = new FileWriter(file, true);) {
             writer.write(messageText + "\n");
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
+    private void loadChatHistory() throws IOException {
+        textArea.appendText("Последние " + howManyMsgLoad + " сообщений:");
+        BufferedReader br = new BufferedReader(new FileReader("ChatHistory.txt"));
+        List<String> listHistory = new ArrayList<>();
+
+        String tmp;
+        while ((tmp = br.readLine()) != null) {
+            listHistory.add("\n" + tmp);
+        }
+        Collections.reverse(listHistory);
+
+        List<String> reverseListHistory = new ArrayList<>();
+        int count = 1;
+        for (int i = 0; i < listHistory.size(); i++) {
+            if (count <= howManyMsgLoad) {
+                reverseListHistory.add(listHistory.get(i));
+                count++;
+            }
+        }
+        Collections.reverse(reverseListHistory);
+
+        StringBuilder chatHistory = new StringBuilder();
+        for (String s : reverseListHistory) {
+            chatHistory.append(s);
+        }
+        textArea.appendText(chatHistory + "\n");
+
+    }
 }
