@@ -21,10 +21,10 @@ public class MainClass {
         System.out.println(file.canWrite());
         new WriteToFile(" строка, потока № 1", " строка, потока № 2", " строка 3 потока № 3");
 
-//        System.out.println("\n" + "Задание 4.3");
-//        MFU mfu = new MFU();
-//        mfu.printMFU();
-//        mfu.scanNFU();
+        System.out.println("\n" + "Задание 4.3");
+        MFU mfu = new MFU();
+        mfu.printMFU();
+        mfu.scanNFU();
 
     }
 }
