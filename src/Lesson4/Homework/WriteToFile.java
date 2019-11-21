@@ -8,11 +8,11 @@ public class WriteToFile {
     public WriteToFile(String letter1, String letter2, String letter3) throws InterruptedException {
 
         Thread one = new Thread(() -> {
-            for (int i = 1; i <= 10; i++) {
-                FileForWrite(letter1, i);
-            }
             try {
-                Thread.sleep(20);
+                for (int i = 1; i <= 10; i++) {
+                    FileForWrite(letter1, i);
+                    Thread.sleep(20);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -21,11 +21,11 @@ public class WriteToFile {
         one.join();
 
         Thread two = new Thread(() -> {
-            for (int i = 1; i <= 10; i++) {
-                FileForWrite(letter2, i);
-            }
             try {
-                Thread.sleep(20);
+                for (int i = 1; i <= 10; i++) {
+                    FileForWrite(letter2, i);
+                    Thread.sleep(20);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -34,11 +34,11 @@ public class WriteToFile {
         two.join();
 
         Thread three = new Thread(() -> {
-            for (int i = 1; i <= 10; i++) {
-                FileForWrite(letter3, i);
-            }
             try {
-                Thread.sleep(20);
+                for (int i = 1; i <= 10; i++) {
+                    FileForWrite(letter3, i);
+                    Thread.sleep(20);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
