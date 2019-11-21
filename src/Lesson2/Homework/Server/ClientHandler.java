@@ -6,6 +6,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 class ClientHandler {
 
@@ -25,7 +27,8 @@ class ClientHandler {
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
 
-            new Thread(() -> {
+            ExecutorService exSer = Executors.newCachedThreadPool();
+            exSer.submit(() -> {
                 try {
                     while (true) {
                         if (authentication()) {
@@ -38,7 +41,7 @@ class ClientHandler {
                 } finally {
                     closeConnection();
                 }
-            }).start();
+            });
         } catch (IOException e) {
             throw new RuntimeException("Ошибка создания подключения к клиенту!", e);
         }
