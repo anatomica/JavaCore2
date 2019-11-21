@@ -16,11 +16,11 @@ public class MainClass {
         print.t2.join();
         print.t3.join();
 
-//        System.out.println("\n\n" + "Задание 4.2");
-//        File file = new File("FileForWrite.txt");
-//        System.out.println(file.canWrite());
-//        new WriteToFile(" строка, потока № 1", " строка, потока № 2", " строка 3 потока № 3");
-//
+        System.out.println("\n\n" + "Задание 4.2");
+        File file = new File("FileForWrite.txt");
+        System.out.println(file.canWrite());
+        new WriteToFile(" строка, потока № 1", " строка, потока № 2", " строка 3 потока № 3");
+
 //        System.out.println("\n" + "Задание 4.3");
 //        MFU mfu = new MFU();
 //        mfu.printMFU();
