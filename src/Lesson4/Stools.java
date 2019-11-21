@@ -1,3 +1,5 @@
+package Lesson4;
+
 class Game {
   Object stool1 = new Object();
   Object stool2 = new Object();

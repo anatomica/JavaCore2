@@ -1,3 +1,5 @@
+package Lesson4;
+
 public class TestSyn {
 
     public  synchronized void m1() {

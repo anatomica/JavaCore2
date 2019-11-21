@@ -1,3 +1,5 @@
+package Lesson4;
+
 public class TestPrior extends Thread
 {
     public void run() {

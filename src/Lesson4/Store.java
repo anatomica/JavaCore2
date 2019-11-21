@@ -1,3 +1,5 @@
+package Lesson4;
+
 public class Store {
     private int product = 0;
 

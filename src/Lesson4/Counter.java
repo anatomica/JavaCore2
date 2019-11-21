@@ -1,3 +1,5 @@
+package Lesson4;
+
 public class Counter {
     int c;
 

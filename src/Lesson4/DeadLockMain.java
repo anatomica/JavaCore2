@@ -1,3 +1,5 @@
+package Lesson4;
+
 public class DeadLockMain {
     static Object lock1 = new Object();
     static Object lock2 = new Object();

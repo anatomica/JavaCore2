@@ -1,3 +1,5 @@
+package Lesson4;
+
 public class VolatileTest {
 
     private volatile static int MY_INT = 0;

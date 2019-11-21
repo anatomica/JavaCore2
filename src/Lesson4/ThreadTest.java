@@ -1,3 +1,5 @@
+package Lesson4;
+
 public class ThreadTest {
 
     private volatile static Integer n = new Integer(300);
