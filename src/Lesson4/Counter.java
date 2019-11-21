@@ -1,24 +1,19 @@
 package Lesson4;
 
 public class Counter {
-    int c;
-
+    private int c;
     public int getC() {
         return c;
     }
-
     public void setC(int c) {
         this.c = c;
     }
-
     public synchronized void dec() {
         c--;
     }
-
     public synchronized void inc() {
         c++;
     }
-
     public Counter() {
         this.c = 0;
     }
@@ -48,13 +43,14 @@ class CounterMain {
 
         t1.start();
         t2.start();
+        System.out.println(c.getC());
 
-        try {
-            t1.join();
-            t2.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            t1.join();
+//            t2.join();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         System.out.println(c.getC());
     }

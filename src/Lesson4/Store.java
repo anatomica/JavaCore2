@@ -34,9 +34,9 @@ public class Store {
 
 class Producer implements Runnable {
 
-    Store store;
+    private Store store;
 
-    public Producer(Store store) {
+    Producer(Store store) {
         this.store = store;
     }
 
@@ -49,9 +49,9 @@ class Producer implements Runnable {
 }
 
 class Consumer implements Runnable {
-    Store store;
+    private Store store;
 
-    public Consumer(Store store) {
+    Consumer(Store store) {
         this.store = store;
     }
 

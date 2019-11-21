@@ -2,11 +2,11 @@ package Lesson4;
 
 public class TestSyn {
 
-    public  synchronized void m1() {
+    public synchronized static void m1() {
         System.out.println("m1");
         for (int i = 0; i< 10; i++) {
             try {
-                Thread.sleep(3000);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -16,7 +16,7 @@ public class TestSyn {
         System.out.println("m1");
         for (int i = 0; i< 10; i++) {
             try {
-                Thread.sleep(3000);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
